@@ -2,6 +2,16 @@
 
 Carthago is a document scanning and similarity comparison application that allows users to upload and analyze documents.
 
+## Screenshots
+
+### User Page
+![Home Page](images/user.png)
+
+
+### Admin Page
+![Scan Results](images/admin.png)
+
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
@@ -35,6 +45,7 @@ To start using Carthago, follow these steps:
     nodemon app.js
     ```
 2. Now Start the HTML pages using live server.
+
 
 ## API Documentation
 
