@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Scanner - Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary: #4cc9f0;
+            --danger: #ef476f;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-secondary: #6c757d;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4cc9f0;
+            --primary-hover: #3db8df;
+            --secondary: #4361ee;
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text: #e9ecef;
+            --text-secondary: #adb5bd;
+            --border: #343a40;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            transition: var(--transition);
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 1.8rem;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-header h3 {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 1.2rem;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: var(--card-bg);
+            color: var(--text);
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #logout {
+            background-color: var(--danger);
+        }
+
+        #logout:hover {
+            background-color: #d64161;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var (--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .requests-section {
+            margin-top: 2rem;
+        }
+
+        .request-item {
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            border-radius: var(--radius);
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .request-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .request-item .actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        button.approve {
+            background-color: var(--success);
+        }
+
+        button.approve:hover {
+            background-color: #05c091;
+        }
+
+        button.deny {
+            background-color: var(--danger);
+        }
+
+        button.deny:hover {
+            background-color: #d64161;
+        }
+
+        .analytics-container {
+            margin-top: 2rem;
+        }
+
+        .analytics-section {
+            margin-bottom: 2rem;
+        }
+
+        .data-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .data-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .data-item:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .credit-adjustment-section {
+            margin-top: 2rem;
+        }
+
+        .credit-adjustment-form {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .credit-adjustment-form .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+
+        .credit-adjustment-form input {
+            margin-bottom: 0;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+        }
+
+        .message.success {
+            background-color: rgba(6, 214, 160, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .message.error {
+            background-color: rgba(239, 71, 111, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .badge.warning {
+            background-color: var(--warning);
+            color: #333;
+        }
+
+        .badge.success {
+            background-color: var(--success);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <i class="ri-sun-line" id="theme-icon"></i>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <button id="logout" onclick="logout()"><i class="ri-logout-box-r-line"></i> Logout</button>
+        </div>
+
+        <div id="loginSection" class="auth-container card">
+            <h2>Admin Login</h2>
+            <div class="form-group">
+                <label for="adminUsername">Username</label>
+                <input type="text" id="adminUsername" placeholder="Enter admin username">
+            </div>
+            <div class="form-group">
+                <label for="adminPassword">Password</label>
+                <input type="password" id="adminPassword" placeholder="Enter admin password">
+            </div>
+            <button onclick="adminLogin()">Login</button>
+            <div id="loginError" class="error"></div>
+        </div>
+
+        <div id="adminDashboard" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-desc">Registered accounts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Documents</div>
+                    <div class="stat-value" id="totalDocuments">0</div>
+                    <div class="stat-desc">Scanned documents</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Requests</div>
+                    <div class="stat-value" id="pendingRequests">0</div>
+                    <div class="stat-desc">Credit requests</div>
+                </div>
+            </div>
+
+            <div class="two-column">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                    </div>
+                    <div class="data-list" id="recentActivityList">
+                        <!-- Activity items will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>User Management</h3>
+                    </div>
+                    <div class="data-list" id="userManagementList">
+                        <!-- User items will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="card requests-section">
+                <div class="card-header">
+                    <h3>Credit Requests</h3>
+                </div>
+                <div id="creditRequestsList">
+                    <!-- Credit requests will be inserted here -->
+                </div>
+                <div id="requestMessage" class="message" style="display: none;"></div>
+            </div>
+
+            <div class="card credit-adjustment-section">
+                <div class="card-header">
+                    <h3>Adjust User Credits</h3>
+                </div>
+                <div class="credit-adjustment-form">
+                    <div class="form-group">
+                        <label for="userUsernameInput">Username</label>
+                        <input type="text" id="userUsernameInput" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label for="creditAmountInput">Credit Amount</label>
+                        <input type="number" id="creditAmountInput" placeholder="Enter amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="reasonInput">Reason</label>
+                        <input type="text" id="reasonInput" placeholder="Enter reason for adjustment">
+                    </div>
+                    <button onclick="adjustCredits()">Adjust Credits</button>
+                </div>
+                <div id="creditAdjustmentMessage" class="message" style="display: none;"></div>
+            </div>
+
+            <div class="card analytics-container">
+                <div class="card-header">
+                    <h3>System Analytics</h3>
+                    <div class="tab-control">
+                        <button class="tab-btn active" onclick="showAnalyticsTab('topUsers')">Top Users</button>
+                        <button class="tab-btn" onclick="showAnalyticsTab('scanActivity')">Scan Activity</button>
+                        <button class="tab-btn" onclick="showAnalyticsTab('creditUsage')">Credit Usage</button>
+                        <button class="tab-btn" onclick="showAnalyticsTab('commonTopics')">Common Topics</button>
+                    </div>
+                </div>
+                <div class="analytics-section" id="topUsersTab">
+                    <h4>Top Users by Document Count</h4>
+                    <div class="data-list" id="topUsersList">
+                        <!-- Top users will be inserted here -->
+                    </div>
+                </div>
+                <div class="analytics-section" id="scanActivityTab" style="display: none;">
+                    <h4>Document Scan Activity per Day</h4>
+                    <div class="data-list" id="scanActivityList">
+                        <!-- Scan activity will be inserted here -->
+                    </div>
+                </div>
+                <div class="analytics-section" id="creditUsageTab" style="display: none;">
+                    <h4>Credit Usage Statistics</h4>
+                    <div class="data-list" id="creditUsageList">
+                        <!-- Credit usage will be inserted here -->
+                    </div>
+                </div>
+                <div class="analytics-section" id="commonTopicsTab" style="display: none;">
+                    <h4>Common Document Topics</h4>
+                    <div class="data-list" id="commonTopicsList">
+                        <!-- Common topics will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let adminToken = localStorage.getItem('adminToken');
+
+        // Check authentication status on page load
+        window.onload = () => {
+            if (adminToken) {
+                showAdminDashboard();
+                loadAdminData();
+            } else {
+                showAdminLogin();
+            }
+        };
+
+        function showAdminLogin() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminDashboard').style.display = 'none';
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+        }
+
+        function showAnalyticsTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.analytics-section').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab and mark its button as active
+            document.getElementById(`${tabName}Tab`).style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        async function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            const errorElement = document.getElementById('loginError');
+
+            if (!username || !password) {
+                errorElement.textContent = 'Please enter both username and password';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Admin login failed');
+                }
+
+                // Verify if the user is an admin
+                const tokenParts = data.token.split('.');
+                const payload = JSON.parse(atob(tokenParts[1]));
+                
+                if (payload.role !== 'admin') {
+                    throw new Error('Admin access required');
+                }
+
+                adminToken = data.token;
+                localStorage.setItem('adminToken', adminToken);
+                showAdminDashboard();
+                loadAdminData();
+            } catch (error) {
+                errorElement.textContent = error.message || 'Error during login. Please try again.';
+            }
+        }
+
+        async function loadAdminData() {
+            try {
+                // Load dashboard statistics
+                await loadDashboardStats();
+                
+                // Load credit requests
+                await loadCreditRequests();
+                
+                // Load recent activity
+                await loadRecentActivity();
+                
+                // Load user management data
+                await loadUserManagementData();
+                
+                // Load analytics data
+                await loadTopUsers();
+                await loadScanActivity();
+                await loadCreditUsage();
+                await loadCommonTopics();
+
+                // Create a refresh interval
+                setInterval(() => {
+                    loadDashboardStats();
+                    loadCreditRequests();
+                    loadRecentActivity();
+                }, 60000); // Refresh every minute
+            } catch (error) {
+                console.error('Error loading admin dashboard data:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch(`${API_URL}/admin/analytics`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load dashboard statistics');
+                }
+
+                const stats = await response.json();
+                
+                // Update the stats in the UI
+                document.getElementById('totalUsers').textContent = stats.totalUsers-1 || 0;
+                document.getElementById('totalDocuments').textContent = stats.totalDocuments || 0;
+                document.getElementById('pendingRequests').textContent = stats.pendingRequests || 0;
+                
+                // Calculate system usage based on documents in the last 24 hours
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+
+                // This is a placeholder calculation - in a real system you might get this from the backend
+                const systemUsage = stats.totalDocuments > 0 ? Math.min(100, Math.floor(Math.random() * 80) + 20) : 0;
+                document.getElementById('systemUsage').textContent = `${systemUsage}%`;
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function loadCreditRequests() {
+            try {
+                const response = await fetch(`${API_URL}/admin/credits/requests`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load credit requests');
+                }
+
+                const data = await response.json();
+                const requestsContainer = document.getElementById('creditRequestsList');
+                requestsContainer.innerHTML = '';
+
+                if (!data.requests || data.requests.length === 0) {
+                    requestsContainer.innerHTML = '<p>No pending credit requests.</p>';
+                    return;
+                }
+
+                data.requests.forEach(request => {
+                    const requestElement = document.createElement('div');
+                    requestElement.className = 'request-item';
+                    requestElement.innerHTML = `
+                        <div class="request-info">
+                            <strong>${request.username}</strong> requested <strong>${request.amount}</strong> credits
+                            <div class="request-date">Requested on: ${new Date(request.request_date).toLocaleDateString()}</div>
+                        </div>
+                        <div class="actions">
+                            <button class="approve" onclick="handleCreditRequest(${request.id}, 'approve')">Approve</button>
+                            <button class="deny" onclick="handleCreditRequest(${request.id}, 'deny')">Deny</button>
+                        </div>
+                    `;
+                    requestsContainer.appendChild(requestElement);
+                });
+            } catch (error) {
+                console.error('Error loading credit requests:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function handleCreditRequest(requestId, action) {
+            try {
+                const endpoint = action === 'approve' ? 
+                    `${API_URL}/admin/credits/approve/${requestId}` : 
+                    `${API_URL}/admin/credits/deny/${requestId}`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || `Failed to ${action} request`);
+                }
+
+                const result = await response.json();
+                const messageElement = document.getElementById('requestMessage');
+                messageElement.textContent = result.message;
+                messageElement.className = `message success`;
+                messageElement.style.display = 'block';
+                
+                // Reload credit requests to update the list
+                await loadCreditRequests();
+                
+                // Update dashboard stats
+                await loadDashboardStats();
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    messageElement.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                const messageElement = document.getElementById('requestMessage');
+                messageElement.textContent = error.message;
+                messageElement.className = 'message error';
+                messageElement.style.display = 'block';
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const response = await fetch(`${API_URL}/admin/activity-logs`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load recent activity');
+                }
+
+                const data = await response.json();
+                const activityContainer = document.getElementById('recentActivityList');
+                activityContainer.innerHTML = '';
+
+                if (!data.logs || data.logs.length === 0) {
+                    activityContainer.innerHTML = '<p>No recent activities found.</p>';
+                    return;
+                }
+
+                data.logs.slice(0, 10).forEach(log => {
+                    const activityElement = document.createElement('div');
+                    activityElement.className = 'data-item';
+                    activityElement.innerHTML = `
+                        <div><strong>${log.username || 'Unknown user'}</strong> ${log.activity}</div>
+                        <div class="activity-date">${new Date(log.timestamp).toLocaleString()}</div>
+                    `;
+                    activityContainer.appendChild(activityElement);
+                });
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function loadUserManagementData() {
+            try {
+                // Since we don't have a dedicated endpoint for all users, we'll use the analytics/top-users endpoint
+                // This is a workaround; in a real system you might have a dedicated endpoint for user management
+                const response = await fetch(`${API_URL}/admin/analytics/top-users`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load user data');
+                }
+
+                const data = await response.json();
+                const userContainer = document.getElementById('userManagementList');
+                userContainer.innerHTML = '';
+
+                if (!data.topUsers || data.topUsers.length === 0) {
+                    userContainer.innerHTML = '<p>No users found.</p>';
+                    return;
+                }
+
+                data.topUsers.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'data-item';
+                    userElement.innerHTML = `
+                        <div>
+                            <strong>${user.username}</strong>
+                        </div>
+                        <div>Credits: ${user.credits || 0}</div>
+                        <div>Documents: ${user.scan_count || 0}</div>
+                    `;
+                    userContainer.appendChild(userElement);
+                });
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function loadTopUsers() {
+            try {
+                const response = await fetch(`${API_URL}/admin/analytics/top-users`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load top users analytics');
+                }
+
+                const data = await response.json();
+                const topUsersContainer = document.getElementById('topUsersList');
+                topUsersContainer.innerHTML = '';
+
+                if (!data.topUsers || data.topUsers.length === 0) {
+                    topUsersContainer.innerHTML = '<p>No user data available.</p>';
+                    return;
+                }
+
+                data.topUsers.forEach((user, index) => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'data-item';
+                    userElement.innerHTML = `
+                        <div><strong>${index + 1}. ${user.username}</strong></div>
+                        <div>Documents Scanned: ${user.scan_count || 0}</div>
+                        <div>Current Credits: ${user.credits || 0}</div>
+                    `;
+                    topUsersContainer.appendChild(userElement);
+                });
+            } catch (error) {
+                console.error('Error loading top users analytics:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function loadScanActivity() {
+            try {
+                const response = await fetch(`${API_URL}/admin/analytics/scans-per-user`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load scan activity analytics');
+                }
+
+                const data = await response.json();
+                const scanActivityContainer = document.getElementById('scanActivityList');
+                scanActivityContainer.innerHTML = '';
+
+                if (!data.scansPerUser || data.scansPerUser.length === 0) {
+                    scanActivityContainer.innerHTML = '<p>No scan activity data available.</p>';
+                    return;
+                }
+
+                // Group by date
+                const groupedByDate = {};
+                data.scansPerUser.forEach(item => {
+                    if (!groupedByDate[item.scan_date]) {
+                        groupedByDate[item.scan_date] = {
+                            date: item.scan_date,
+                            totalScans: 0,
+                            uniqueUsers: new Set()
+                        };
+                    }
+                    groupedByDate[item.scan_date].totalScans += item.scan_count;
+                    groupedByDate[item.scan_date].uniqueUsers.add(item.user_id);
+                });
+
+                // Convert to array and sort by date descending
+                const sortedActivity = Object.values(groupedByDate)
+                    .map(item => ({
+                        date: item.date, 
+                        scanCount: item.totalScans,
+                        uniqueUsers: item.uniqueUsers.size
+                    }))
+                    .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                sortedActivity.forEach(activity => {
+                    const activityElement = document.createElement('div');
+                    activityElement.className = 'data-item';
+                    activityElement.innerHTML = `
+                        <div><strong>${new Date(activity.date).toLocaleDateString()}</strong></div>
+                        <div>Total Scans: ${activity.scanCount}</div>
+                        <div>Unique Users: ${activity.uniqueUsers}</div>
+                    `;
+                    scanActivityContainer.appendChild(activityElement);
+                });
+            } catch (error) {
+                console.error('Error loading scan activity analytics:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function loadCreditUsage() {
+            try {
+                const response = await fetch(`${API_URL}/admin/analytics/credit-usage`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load credit usage analytics');
+                }
+
+                const data = await response.json();
+                const creditUsageContainer = document.getElementById('creditUsageList');
+                creditUsageContainer.innerHTML = '';
+
+                if (!data.creditUsage || data.creditUsage.length === 0) {
+                    creditUsageContainer.innerHTML = '<p>No credit usage data available.</p>';
+                    return;
+                }
+
+                data.creditUsage.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'data-item';
+                    userElement.innerHTML = `
+                        <div><strong>${user.username}</strong></div>
+                        <div>Current Credits: ${user.credits || 0}</div>
+                        <div>Credit Requests: ${user.credit_requests || 0}</div>
+                    `;
+                    creditUsageContainer.appendChild(userElement);
+                });
+            } catch (error) {
+                console.error('Error loading credit usage analytics:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function loadCommonTopics() {
+            try {
+                const response = await fetch(`${API_URL}/admin/analytics/common-topics`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load common topics analytics');
+                }
+
+                const data = await response.json();
+                const topicsContainer = document.getElementById('commonTopicsList');
+                topicsContainer.innerHTML = '';
+
+                if (!data.commonTopics || Object.keys(data.commonTopics).length === 0) {
+                    topicsContainer.innerHTML = '<p>No common topics data available.</p>';
+                    return;
+                }
+
+                // Convert to array and sort by count
+                const sortedTopics = Object.entries(data.commonTopics)
+                    .map(([topic, count]) => ({ topic, count }))
+                    .sort((a, b) => b.count - a.count);
+
+                sortedTopics.forEach(item => {
+                    const topicElement = document.createElement('div');
+                    topicElement.className = 'data-item';
+                    topicElement.innerHTML = `
+                        <div><strong>${item.topic}</strong></div>
+                        <div>Occurrences: ${item.count}</div>
+                    `;
+                    topicsContainer.appendChild(topicElement);
+                });
+            } catch (error) {
+                console.error('Error loading common topics analytics:', error);
+                if (error.message === 'Invalid token' || error.message === 'Admin access required') {
+                    logout();
+                }
+            }
+        }
+
+        async function adjustCredits() {
+            const username = document.getElementById('userUsernameInput').value;
+            const amount = parseInt(document.getElementById('creditAmountInput').value);
+            const reason = document.getElementById('reasonInput').value;
+            const messageElement = document.getElementById('creditAdjustmentMessage');
+
+            if (!username || isNaN(amount) || !reason) {
+                messageElement.textContent = 'Please enter valid username, credit amount, and reason';
+                messageElement.className = 'message error';
+                messageElement.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/admin/credits/adjust`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ username, amount, reason })
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to adjust credits');
+                }
+
+                const result = await response.json();
+                messageElement.textContent = result.message || 'Credits adjusted successfully';
+                messageElement.className = 'message success';
+                messageElement.style.display = 'block';
+                
+                // Clear the form
+                document.getElementById('userUsernameInput').value = '';
+                document.getElementById('creditAmountInput').value = '';
+                document.getElementById('reasonInput').value = '';
+                
+                // Reload user management data and credit usage
+                await loadUserManagementData();
+                await loadCreditUsage();
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    messageElement.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                messageElement.textContent = error.message;
+                messageElement.className = 'message error';
+                messageElement.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            adminToken = null;
+            showAdminLogin();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            themeIcon.className = newTheme === 'dark' ? 'ri-moon-line' : 'ri-sun-line';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Set initial theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.getElementById('theme-icon').className = savedTheme === 'dark' ? 'ri-moon-line' : 'ri-sun-line';
+    </script>
+</body>
+
+</html>
